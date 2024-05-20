@@ -23,7 +23,7 @@ const goToLogin=()=>{
 // handler for signup
 const goToSignup=()=>{
     router.push({
-        name:'Signup'
+        name:'register'
     })
 }
 </script>
