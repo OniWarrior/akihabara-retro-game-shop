@@ -33,6 +33,20 @@
             <div class="errors">
                 <span>{{ errors.username }}</span>
             </div>
+
+            <label for="password">Password</label>
+            <input
+               id="password"
+               v-model = 'data.password'
+               type="password"
+               name="password"
+               required
+               @input = 'onInputChange'
+            />
+
+            <div class="errors">
+                <span>{{ errors.password }}</span>
+            </div>
         </fieldset>
 
 
