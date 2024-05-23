@@ -4,7 +4,8 @@
     import {useAuthStore} from '../stores/AuthStore'
     import {useFormValidation} from '../hooks/useFormValidation'
 
-    const authStore = useAuthStore()
+    // TODO--uncomment once the api call is created
+    //const authStore = useAuthStore()
 
     const {data,errors,onInputChange} = useFormValidation(RegisterSchema)
         // handler for register form submission
