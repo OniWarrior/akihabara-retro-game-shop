@@ -1,5 +1,9 @@
 <script setup>
    import SignedOutNav from '../components/SignedOutNav.vue'
+   import RegisterSchema from '../formschemas/RegisterSchema.js'
+   import {useAuthStore} from '../stores/AuthStore'
+
+   const authStore = useAuthStore()
 
    // handler for register form submission
    const onRegisterSubmit=()=>{
@@ -7,7 +11,7 @@
    }
 
 
-   
+
 </script>
 
 <template>
