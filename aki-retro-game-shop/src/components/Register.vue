@@ -28,6 +28,7 @@
                type="text"
                name="username"
                required
+               placeholder="username"
                @input="onInputChange"
             />
 
@@ -42,6 +43,7 @@
                type="password"
                name="password"
                required
+               placeholder="password"
                @input = 'onInputChange'
             />
 
@@ -50,8 +52,90 @@
             </div>
         </fieldset>
 
+        <button class="submission" type="submit" >Register</button>
+
 
     </form>
     
     
 </template>
+
+
+<style scoped>
+   .errors{
+      color:red;
+   }
+   fieldset{
+    display: flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+   
+    
+   }
+   
+   .register-form-container h1{
+      font-size: xx-large;
+      
+
+   }
+
+
+   .register-form-container{
+       margin:auto;
+       
+       font-family: Arial, Helvetica, sans-serif;
+       color:white;
+       display:flex;
+       flex-direction: column;
+       align-items: center;
+       background-color: rgba(0,0,0,0.8);
+       border-radius:20px;
+       min-height: 30em;
+       max-width:37em;
+       justify-content: space-evenly;
+   }
+
+   .submission{
+        background-color: rgba(65, 0, 139, 0.8);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 50px;
+        box-shadow: 3px 3px 3px 3px rgba(0, 0, 139, 0.58);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+   }
+
+   .submission:hover {
+      background-color: #00d8ff; /* Electric Blue */
+      transform: translateY(-2px);
+      animation: glowing 1200ms infinite;
+   }
+
+   .submission:active {
+      background-color: #ffdd00; /* Bright Yellow */
+      transform: translateY(0);
+   }
+
+
+@keyframes glowing {
+        0% {
+          
+          background-color: darkviolet;
+          box-shadow: 0 0 5px darkviolet;
+          border: 2px solid darkviolet;
+        }
+        50% {
+          
+          background-color: #eebdff;
+          box-shadow: 0 0 20px #eebdff;
+          border: 2px solid #f8e4ff;
+        }
+        100% {
+          
+          background-color: #9400D3;
+          box-shadow: 0 0 5px #9400D3;
+          border: 2px solid #9400D3;
+        }
+      }
+</style>
