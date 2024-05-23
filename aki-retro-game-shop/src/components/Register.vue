@@ -1,17 +1,16 @@
 <script setup>
-   import SignedOutNav from '../components/SignedOutNav.vue'
-   import RegisterSchema from '../formschemas/RegisterSchema.js'
-   import {useAuthStore} from '../stores/AuthStore'
+    import SignedOutNav from '../components/SignedOutNav.vue'
+    import RegisterSchema from '../formschemas/RegisterSchema.js'
+    import {useAuthStore} from '../stores/AuthStore'
+    import {useFormValidation} from '../hooks/useFormValidation'
 
-   const authStore = useAuthStore()
+    const authStore = useAuthStore()
 
-   // handler for register form submission
-   const onRegisterSubmit=()=>{
-      // TODO-- place api call when available
-   }
-
-
-
+    const {data,errors,onInputChange} = useFormValidation(RegisterSchema)
+        // handler for register form submission
+        const onRegisterSubmit=()=>{
+           // TODO-- place api call when available
+        }
 </script>
 
 <template>
@@ -24,11 +23,16 @@
             <label for="username">Username</label>
             <input 
                id="username"
+               v-model = 'data.username'
                type="text"
                name="username"
                required
-
+               @input="onInputChange"
             />
+
+            <div class="errors">
+                <span>{{ errors.username }}</span>
+            </div>
         </fieldset>
 
 
