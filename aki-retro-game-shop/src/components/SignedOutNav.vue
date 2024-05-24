@@ -8,7 +8,7 @@ const router = useRouter()
 // handler for going home
 const goToHome=()=>{
    router.push({
-      name: 'Landing'
+      name: 'home'
 
    })
 }
@@ -16,14 +16,14 @@ const goToHome=()=>{
 // handler for login
 const goToLogin=()=>{
     router.push({
-        name:'Login'
+        name:'login'
     })
 }
 
 // handler for signup
 const goToSignup=()=>{
     router.push({
-        name:'Signup'
+        name:'register'
     })
 }
 </script>
