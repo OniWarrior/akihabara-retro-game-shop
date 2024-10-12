@@ -7,7 +7,7 @@
   <router-view/>    
 </template>
 
-<style >
+<style scoped>
    /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
@@ -30,7 +30,7 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font-size: 100%;
-	font: inherit;
+	
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */

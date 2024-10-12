@@ -1,5 +1,5 @@
 <script setup>
-import Landing from '../components/LandingPage.vue'
+import Landing from '../components/LandingComp.vue'
 </script>
 
 <template>
@@ -16,9 +16,11 @@ import Landing from '../components/LandingPage.vue'
      background-position: center;
      background-repeat: no-repeat;
      background-size: cover;
-     height: 100vh;
-     width:100%;
-     position: relative; /* Ensure relative positioning */
+     position: fixed;
+       top: 0;
+       left: 0;
+       width: 100vw;
+       height: 100vh;
     
      
    }

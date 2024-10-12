@@ -3,6 +3,7 @@
 </script>
 
 <template>
+  
   <SignedOutNav/>
   <div class="landing">
     
@@ -26,12 +27,12 @@
    
    
    .landing {
-    
+   
     height: 40%; /* Adjust height to take up half of the container */
     display: flex;
     flex-direction: column;
     justify-content: flex-end; /* Align the content to the bottom */
-    
+    width:100vw;
     
    }
 
@@ -52,7 +53,7 @@
        margin-top:12vh;
        
        color:white;
-       text-align: center;
+       
        animation: glowing 1200ms infinite;
        
 
