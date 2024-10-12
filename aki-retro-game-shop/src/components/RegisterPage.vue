@@ -1,5 +1,5 @@
 <script setup>
-    import SignedOutNav from '../components/SignedOutNav.vue'
+    import SignedOutNav from './SignedOutNav.vue'
     import RegisterSchema from '../formschemas/RegisterSchema.js'
     //import {useAuthStore} from '../stores/AuthStore'
     import {useFormValidation} from '../hooks/useFormValidation'

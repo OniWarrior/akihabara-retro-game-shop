@@ -1,5 +1,5 @@
 <script setup>
-   import SignedOutNav from '../components/SignedOutNav.vue'
+   import SignedOutNav from './SignedOutNav.vue'
 </script>
 
 <template>
