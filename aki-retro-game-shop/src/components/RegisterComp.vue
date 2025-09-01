@@ -26,6 +26,7 @@
                id="username"
                v-model = 'data.username'
                type="text"
+               class="text-box"
                name="username"
                required
                placeholder="username"
@@ -39,6 +40,7 @@
             <label for="password">Password</label>
             <input
                id="password"
+               class="text-box"
                v-model = 'data.password'
                type="password"
                name="password"
@@ -79,7 +81,10 @@
 
    }
 
-
+   .text-box{
+      min-height:2em;
+      border-radius:20px;
+   }
    .register-form-container{
        margin:auto;
        

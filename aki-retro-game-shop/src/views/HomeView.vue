@@ -15,9 +15,9 @@ import LandingComp from '../components/LandingComp.vue'
 
 <style scoped>
    .home-container{
-    
+     
      margin:auto;
-     height: 198vh;
+     height: 130vh;
     
      
    }

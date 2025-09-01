@@ -12,14 +12,17 @@
 
 <template>
     <SignedOutNav/>
-    <h1>Login</h1>
+   
     <form class="login-form-container" @submit.prevent="onLoginSubmit">
+        <h1>Login</h1>
         <fieldset>
+         
           <legend>Login Credentials</legend>
           <label for="username">Username:</label>
           <input
              id="username"
              type="text"
+             class="text-box"
              v-model="data.username"
              name="username"
              placeholder="username"
@@ -38,6 +41,7 @@
              id="password"
              type="password"
              name="password"
+             class="text-box"
              v-model="data.password"
              placeholder="Password"
              required
@@ -67,6 +71,10 @@
     
    }
    
+   .text-box{
+    min-height: 2em;
+    border-radius: 20px;
+   }
    .login-form-container h1{
       font-size: xx-large;
       

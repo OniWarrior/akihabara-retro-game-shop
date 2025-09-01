@@ -46,17 +46,21 @@ const goToSignup=()=>{
       justify-content: space-evenly;
       align-items: center;
       padding-top:2em;
-      padding-bottom:10vh;
+      padding-bottom:5vh;
+      position:relative;
+      background-color: black;
+      border-bottom: 1px solid burlywood;
+      box-shadow: 1px 7px 1px 10px rgba(222, 184, 139, 0.58);
    }
 
    .signed-out-nav button {
-    background-color: rgba(0,0,139,0.8);
+    background-color: rgba(222, 184, 135, 0.906);
     color: white;
     border: none;
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 50px;
-    box-shadow: 3px 3px 3px 3px rgba(0, 0, 139, 0.58);
+    box-shadow: 3px 3px 3px 3px rgba(222, 184, 139, 0.58);
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
@@ -74,19 +78,19 @@ const goToSignup=()=>{
 
 @keyframes glowing {
         0% {
-          background-color: darkviolet;
-          box-shadow: 0 0 5px darkviolet;
-          border: 2px solid darkviolet;
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906)t;
         }
         50% {
           background-color: #eebdff;
           box-shadow: 0 0 20px #eebdff;
-          border: 2px solid #f8e4ff;
+          border: 1px solid #f8e4ff;
         }
         100% {
-          background-color: #9400D3;
-          box-shadow: 0 0 5px #9400D3;
-          border: 2px solid #9400D3;
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906);
         }
       }
 </style>
