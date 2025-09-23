@@ -50,7 +50,7 @@ const goToSignup=()=>{
       position:relative;
       background-color: black;
       border-bottom: 1px solid burlywood;
-      box-shadow: 1px 7px 1px 10px rgba(222, 184, 139, 0.58);
+     
    }
 
    .signed-out-nav button {
@@ -83,9 +83,9 @@ const goToSignup=()=>{
           border: 1px solid rgba(222, 184, 135, 0.906)t;
         }
         50% {
-          background-color: #eebdff;
-          box-shadow: 0 0 20px #eebdff;
-          border: 1px solid #f8e4ff;
+          background-color: #feffbd;
+          box-shadow: 0 0 20px #fff9bd;
+          border: 1px solid #fffae4;
         }
         100% {
           background-color: rgba(222, 184, 135, 0.906);

@@ -11,15 +11,27 @@
 </script>
 
 <template>
+  <div class="login-container">
     <SignedOutNav/>
    
-    <form class="login-form-container" @submit.prevent="onLoginSubmit">
-        <h1>Login</h1>
-        <fieldset>
+    <div class="login-main">
+      <div class="login-box">
+        
+       <form class="login-form-container" @submit.prevent="onLoginSubmit">        
+          
+         <div class="login-header">
+          <h2>Login</h2>
+         </div>
+         <div class="input-group">
+
          
-          <legend>Login Credentials</legend>
-          <label for="username">Username:</label>
-          <input
+          <div class="legends-group">
+            <label for="username">Username:</label>
+            <label for="password">Password:</label>
+          </div>
+          
+          <div class="text-box-group">
+             <input
              id="username"
              type="text"
              class="text-box"
@@ -29,15 +41,11 @@
              required
              @input="onInputChange"
 
-          />
+             />
 
-          <div class="errors">
-            <span>{{ errors.username }}</span>
+            
 
-          </div>
-
-          <label for="password">Password:</label>
-          <input
+             <input
              id="password"
              type="password"
              name="password"
@@ -46,35 +54,104 @@
              placeholder="Password"
              required
              @input="onInputChange"
-          />
-          <div class="errors">
-            <span>{{ errors.password }}</span>
+             />
+
+          </div>  
+          
+         
+                 
+          <div class="errors-group">
+             <div class="errors">
+               <span>{{ errors.username }}</span>
+             </div>
+             <div class="errors">
+               <span>{{ errors.password }}</span>
+             </div>
 
           </div>
-      </fieldset>
-      <button class="login-btn" type="submit">Login</button>
-
-    </form>
-    
-    
+         
+        </div>
+        <div class="log-btn-container">
+          <button class="login-btn" type="submit">Login</button>
+        </div>
+        
+       </form>
+        
+      <div class="login-img-container"> </div>
+     </div>
+    </div>
+  </div>  
 </template>
 
 <style scoped>
     .errors{
       color:red;
    }
-   fieldset{
+  
+
+   .log-btn-container{
+    padding-top: 4em;
+    text-align: center;
+   }
+
+
+   .input-group{
     display: flex;
-    flex-direction:column;
-    justify-content:space-evenly;
-   
-    
+    flex-direction: row;
+    margin:auto;
+    justify-content: space-evenly;
+   }
+
+
+   .legends-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+   }
+
+   .text-box-group{
+    display: flex;
+    flex-direction: column;
+    width: 15em;
+   }
+
+
+   .login-main{
+    min-height:100vh;
+    padding-top:5%;
+    background-color:black;
+   }
+
+
+   .login-box{
+        display: flex;
+        flex-direction: row;         
+         background-color: white;
+         border-radius:20px;
+         min-height: 30em;
+         max-width:70em;
+         margin:auto;
+         
+   }
+
+   .login-img-container{
+      width:60em;
+      height:30em;
+      background-image: url("../assets/akihabara_new_login.png");
+      background-attachment: scroll;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      border-radius: 20px;
    }
    
    .text-box{
     min-height: 2em;
+    
     border-radius: 20px;
    }
+
+
    .login-form-container h1{
       font-size: xx-large;
       
@@ -86,26 +163,24 @@
        margin:auto;
        
        font-family: Arial, Helvetica, sans-serif;
-       color:white;
-       display:flex;
-       flex-direction: column;
+       color:black;
+       
        align-items: center;
-       background-color: rgba(0,0,0,0.8);
-       border-radius:20px;
-       min-height: 30em;
-       max-width:37em;
-       justify-content: space-evenly;
+       width:100%;
+       height:40%;
+       
    }
 
    .login-btn{
-        background-color: rgba(65, 0, 139, 0.8);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 50px;
-        box-shadow: 3px 3px 3px 3px rgba(0, 0, 139, 0.58);
-        transition: background-color 0.3s ease, transform 0.3s ease;
+       background-color: rgba(222, 184, 135, 0.906);
+       color: white;
+       border: none;
+       padding: 10px 20px;
+       font-size: 16px;
+       border-radius: 50px;
+       box-shadow: 3px 3px 3px 3px rgba(222, 184, 139, 0.58);
+       transition: background-color 0.3s ease, transform 0.3s ease;
+        
    }
 
    .login-btn:hover {
@@ -119,25 +194,26 @@
       transform: translateY(0);
    }
 
-
+   .login-header{
+    font-size: x-large;
+    text-align: center;
+    padding-bottom: 3em;
+   }
 @keyframes glowing {
-        0% {
-          
-          background-color: darkviolet;
-          box-shadow: 0 0 5px darkviolet;
-          border: 2px solid darkviolet;
+          0% {
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906)t;
         }
         50% {
-          
-          background-color: #eebdff;
-          box-shadow: 0 0 20px #eebdff;
-          border: 2px solid #f8e4ff;
+          background-color: #feffbd;
+          box-shadow: 0 0 20px #fff9bd;
+          border: 1px solid #fffae4;
         }
         100% {
-          
-          background-color: #9400D3;
-          box-shadow: 0 0 5px #9400D3;
-          border: 2px solid #9400D3;
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906);
         }
       }
 </style>
