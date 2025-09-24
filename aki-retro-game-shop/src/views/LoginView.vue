@@ -1,5 +1,5 @@
 <script setup>
-   import Login from '../components/Login.vue';
+   import Login from '../components/LoginComp.vue';
 </script>
 
 
@@ -12,12 +12,8 @@
 
 <style scoped>
    .login{
-       background-image: url('../assets/LoginAkiImg.png');
-       background-attachment: scroll;
-       background-position: center;
-       background-repeat: no-repeat;
-       background-size: cover;
-       height: 100vh;
-       width:100%;
+      
+       min-height: 100vh;
+       
    }
 </style>

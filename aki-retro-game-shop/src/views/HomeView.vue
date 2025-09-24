@@ -1,9 +1,13 @@
 <script setup>
-import Landing from '../components/Landing.vue'
+import LandingComp from '../components/LandingComp.vue'
 </script>
 
 <template>
-  <div class="home-container"> <Landing /></div>
+  <div class="home-container"> 
+    <LandingComp />
+   
+    
+  </div>
   
    
   
@@ -11,14 +15,9 @@ import Landing from '../components/Landing.vue'
 
 <style scoped>
    .home-container{
-     background-image: url('../assets/akiGameshop.png');
-     background-attachment: scroll;
-     background-position: center;
-     background-repeat: no-repeat;
-     background-size: cover;
-     height: 100vh;
-     width:100%;
-     position: relative; /* Ensure relative positioning */
+     
+     margin:auto;
+     height: 130vh;
     
      
    }
