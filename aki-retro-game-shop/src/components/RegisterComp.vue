@@ -15,132 +15,212 @@
 </script>
 
 <template>
+    <div class="reg-container">
     <SignedOutNav/>
-    <form class="register-form-container" @submit.prevent  = 'onRegisterSubmit'>
-        <h1>Register New Account</h1>
+   
+    <div class="reg-main">
+      <div class="reg-box">
+        
+       <form class="reg-form-container" @submit.prevent="onRegisterSubmit">        
+          
+         <div class="reg-header">
+          <h2>Register</h2>
+         </div>
+         <div class="input-group">
 
-        <fieldset>
-            <legend>Credentials for new account</legend>
-            <label for="username">Username</label>
-            <input 
-               id="username"
-               v-model = 'data.username'
-               type="text"
-               class="text-box"
-               name="username"
-               required
-               placeholder="username"
-               @input="onInputChange"
-            />
+         
+          <div class="legends-group">
+            <label for="username">Username:</label>
+            <label for="password">Password:</label>
+          </div>
+          
+          <div class="text-box-group">
+             <input
+             id="username"
+             type="text"
+             class="text-box"
+             v-model="data.username"
+             name="username"
+             placeholder="username"
+             required
+             @input="onInputChange"
 
-            <div class="errors">
-                <span>{{ errors.username }}</span>
-            </div>
+             />
 
-            <label for="password">Password</label>
-            <input
-               id="password"
-               class="text-box"
-               v-model = 'data.password'
-               type="password"
-               name="password"
-               required
-               placeholder="password"
-               @input = 'onInputChange'
-            />
+            
 
-            <div class="errors">
-                <span>{{ errors.password }}</span>
-            </div>
-        </fieldset>
+             <input
+             id="password"
+             type="password"
+             name="password"
+             class="text-box"
+             v-model="data.password"
+             placeholder="Password"
+             required
+             @input="onInputChange"
+             />
 
-        <button class="submission" type="submit" >Register</button>
+          </div>  
+          
+         
+                 
+          <div class="errors-group">
+             <div class="errors">
+               <span>{{ errors.username }}</span>
+             </div>
+             <div class="errors">
+               <span>{{ errors.password }}</span>
+             </div>
 
-
-    </form>
+          </div>
+         
+        </div>
+        <div class="reg-btn-container">
+          <button class="reg-btn" type="submit">Login</button>
+        </div>
+        
+       </form>
+        
+      <div class="reg-img-container"> </div>
+     </div>
+    </div>
+  </div>  
     
     
 </template>
 
 
 <style scoped>
-   .errors{
+ .errors{
       color:red;
    }
-   fieldset{
+  
+
+   .reg-btn-container{
+    padding-top: 4em;
+    text-align: center;
+   }
+
+
+   .input-group{
     display: flex;
-    flex-direction:column;
-    justify-content:space-evenly;
-   
-    
+    flex-direction: row;
+    margin:auto;
+    justify-content: space-evenly;
+   }
+
+
+   .legends-group{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+   }
+
+   .text-box-group{
+    display: flex;
+    flex-direction: column;
+    width: 15em;
+   }
+
+
+   .reg-main{
+    min-height:100vh;
+    padding-top:5%;
+    background-color:black;
+   }
+
+
+   .reg-box{
+        display: flex;
+        flex-direction: row;         
+         background-color: white;
+         border-radius:20px;
+         min-height: 30em;
+         max-width:70em;
+         margin:auto;
+         
+   }
+
+   .reg-img-container{
+      width:60em;
+      height:30em;
+      background-image: url("../assets/akihabara_new_signup.png");
+      background-attachment: scroll;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      border-radius: 20px;
    }
    
-   .register-form-container h1{
+   .text-box{
+    min-height: 2em;
+    
+    border-radius: 20px;
+   }
+
+
+   .reg-form-container h1{
       font-size: xx-large;
       
 
    }
 
-   .text-box{
-      min-height:2em;
-      border-radius:20px;
-   }
-   .register-form-container{
+
+   .reg-form-container{
        margin:auto;
        
        font-family: Arial, Helvetica, sans-serif;
-       color:white;
-       display:flex;
-       flex-direction: column;
+       color:black;
+       
        align-items: center;
-       background-color: rgba(0,0,0,0.8);
-       border-radius:20px;
-       min-height: 30em;
-       max-width:37em;
-       justify-content: space-evenly;
+       width:100%;
+       height:40%;
+       
    }
 
-   .submission{
-        background-color: rgba(65, 0, 139, 0.8);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 50px;
-        box-shadow: 3px 3px 3px 3px rgba(0, 0, 139, 0.58);
-        transition: background-color 0.3s ease, transform 0.3s ease;
+   .reg-btn{
+       background-color: rgba(222, 184, 135, 0.906);
+       color: white;
+       border: none;
+       padding: 10px 20px;
+       font-size: 16px;
+       border-radius: 50px;
+       box-shadow: 3px 3px 3px 3px rgba(222, 184, 139, 0.58);
+       transition: background-color 0.3s ease, transform 0.3s ease;
+        
    }
 
-   .submission:hover {
+   .reg-btn:hover {
       background-color: #00d8ff; /* Electric Blue */
       transform: translateY(-2px);
       animation: glowing 1200ms infinite;
    }
 
-   .submission:active {
+   .reg-btn:active {
       background-color: #ffdd00; /* Bright Yellow */
       transform: translateY(0);
    }
 
-
+   .reg-header{
+    font-size: x-large;
+    text-align: center;
+    padding-bottom: 3em;
+   }
 @keyframes glowing {
-        0% {
-          
-          background-color: darkviolet;
-          box-shadow: 0 0 5px darkviolet;
-          border: 2px solid darkviolet;
+          0% {
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906)t;
         }
         50% {
-          
-          background-color: #eebdff;
-          box-shadow: 0 0 20px #eebdff;
-          border: 2px solid #f8e4ff;
+          background-color: #feffbd;
+          box-shadow: 0 0 20px #fff9bd;
+          border: 1px solid #fffae4;
         }
         100% {
-          
-          background-color: #9400D3;
-          box-shadow: 0 0 5px #9400D3;
-          border: 2px solid #9400D3;
+          background-color: rgba(222, 184, 135, 0.906);
+          box-shadow: 0 0 5px rgba(222, 184, 135, 0.906);
+          border: 1px solid rgba(222, 184, 135, 0.906);
         }
       }
 </style>
