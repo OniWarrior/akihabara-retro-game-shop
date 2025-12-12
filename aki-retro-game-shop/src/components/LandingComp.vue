@@ -25,7 +25,7 @@
       <div class="landing-main-txt-paragraph">
         <p>
           Many of us on the team are big fans of Studio Ghibli. Perhaps you can
-          tell from our hero banner at the top of the page that is in the style of Ghibli.
+          tell from our hero banner on this page that is in the style of Ghibli.
           At least, we tried to make it that way. 
         </p>
       </div>
@@ -59,6 +59,23 @@
   background-size:cover;
   height:100%;
   width: 100%;  
+}
+
+.landing-main-txt-group{
+  color:white;
+  display:flex;
+  flex-direction: column;
+  margin-left:57%;
+  justify-items: center;
+  justify-content: space-evenly;
+  font-family: fantasy;
+  height:50vh;
+
+
+}
+
+.landing-title-header{
+  font-size:xx-large;
 }
 
  
