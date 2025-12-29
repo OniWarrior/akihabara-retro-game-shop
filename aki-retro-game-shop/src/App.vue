@@ -1,15 +1,16 @@
 
 
 <script setup>
-import { onMounted } from "vue";
-import { useAuthStore } from "@/stores/auth";
+	import { onMounted } from "vue";
+	import { useCsrfStore } from "@/stores/csrf.store";
 
-const auth = useAuthStore();
+    //import the csrf store to fetch token
+	const csrf = useCsrfStore();
 
-// Call check status onMounted to rehydrate session
-onMounted(() => {
-  auth.checkStatus();
-});
+	onMounted(() => {
+
+  		csrf.fetchToken(); // warms up token early
+	});
 </script>
 
 
