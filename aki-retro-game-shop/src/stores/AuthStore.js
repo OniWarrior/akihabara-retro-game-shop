@@ -1,88 +1,166 @@
+/*
+ * Author : Stephen Aranda
+ * File   : AuthStore.js
+ * Desc   : Auth Store for tracking user state. along with action suite
+ */
+
 import { defineStore } from "pinia";
+import { apiFetch } from "@/api/client";
 
-import apiFetch from "@/api/client";
-
-
-export const useAuthStore = defineStore('auth', {
-
-    // information being tracked about the user.
+export const useAuthStore = defineStore("auth", {
     state: () => ({
-        user: null,  // user 
-        checked: false,   // have we checked auth status at least once
+        user: null,              // { user_id, username } from session
+        authenticated: false,
+        checked: false,          // have we called /status at least once?
+        csrfToken: null,         // cached token for this session
         loading: false,
-        error: null
-
+        error: null,
     }),
 
-    // retrieve user state object
     getters: {
-        isAuthenticated: (state) => !!state.user
-
+        isAuthenticated: (state) => state.authenticated,
     },
 
-
-    // action suite - api calls
     actions: {
+        // --- CSRF ---
+        async fetchCsrf() {
+            // fetch once per session (fine to re-fetch too, but cache is nice)
+            if (this.csrfToken) return this.csrfToken;
 
-        // check if user is authenticated
-        async checkStatus() {
+            // Make api call to get csrf token
+            const response = await apiFetch("/api/auth/csrf");
+            this.csrfToken = response.csrfToken;
+            return this.csrfToken;
+        },
+
+        // returns stored token
+        _csrfHeader() {
+            if (!this.csrfToken) return {};
+            return { "X-CSRF-Token": this.csrfToken };
+        },
+
+        // --- Session status ---
+        async status() {
+
+            // start the api call for checking authentication
+            this.loading = true;       // initial load is true
+            this.error = null;         // no error yet.
 
             try {
 
+                // make the api call to get the status from the session
+                const response = await apiFetch("/api/auth/status");
 
-                // start of api call
+                // successful- store in local authenticated property
+                this.authenticated = !!response.authenticated;
 
-                // set loading and error to true and null
-                this.loading = true;
-                this.error = null;
-
-                // make api call
-                const response = await apiFetch("/auth/status");
-
-                // assign user session object to this.user if the user is authenticated.
+                // return user data if authenticated is true otherwise return null
                 this.user = response.authenticated ? response.user : null;
 
-                // checked if the user is authenticated
+                // set checked status to true
                 this.checked = true;
+
+                // if not authenticated, csrf token is irrelevant
+                if (!this.authenticated) this.csrfToken = null;
+
                 return response;
 
+                // api call failed- set the failure message
             } catch (err) {
-                // If backend uses 401 for "not logged in"
-                if (err.status === 401) {
-                    this.user = null;
-                    this.checked = true;
-                    return;
-                }
+                this.error = err.message;
+                this.checked = true;
+                this.authenticated = false;
+                this.user = null;
+                this.csrfToken = null;
+                throw err;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // --- Auth actions ---
+        async login(userCredentials) {
+
+            // start api call 
+            this.loading = true;
+            this.error = null;
+
+            try {
+                // Fetch the locally stored CSRF token for login api call.
+                const token = await this.fetchCsrf();
+
+                const response = await apiFetch("/api/auth/login", {
+                    method: "POST",
+                    headers: token,
+                    body: JSON.stringify(userCredentials),
+                });
+
+                // have confirmation of login message popup
+                alert(response.message)
+
+                // login response does NOT include user, so hydrate from /status
+                await this.status();
+            } catch (err) {
                 this.error = err.message;
                 throw err;
             } finally {
                 this.loading = false;
             }
-
         },
 
-        // post login
-        async login({ username, password }) {
+        async signup(userCredentials) {
 
+            // start api call 
+            this.loading = true;
+            this.error = null;
 
             try {
+                // get the CSRF token for api call authentication
+                const token = await this.fetchCsrf();
 
-                // Start the api call
-                // set loading and error to true and null.
-                this.loading = true;
-                this.error = null;
-
-                // make api call
-                const response = await apiFetch("/auth/login", {
+                const signup = await apiFetch("/api/auth/signup", {
                     method: "POST",
-                    body: JSON.stringify({ username, password }),
+                    headers: token,
+                    body: JSON.stringify(userCredentials),
+                });
+
+                // confirmation message for register confirmation
+                alert(signup.message);
+            } catch (err) { // failure of api call set error message
+                this.error = err.message;
+                throw err;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // action for logout
+        async logout() {
+
+            // start the api call
+            this.loading = true;
+            this.error = null;
+
+            try {
+                // get csrf token
+                const token = await this.fetchCsrf();
+
+                // make api call to logout
+                const loggedOut = await apiFetch("/api/auth/logout", {
+                    method: "POST",
+                    headers: token,
                 });
 
 
+                // show logged out popup
+                alert(loggedOut.message);
 
-                return response;
+                // clear local state
+                this.user = null;
+                this.authenticated = false;
+                this.checked = true;
+                this.csrfToken = null;
             } catch (err) {
-                // error message if login fails
                 this.error = err.message;
                 throw err;
             } finally {
@@ -90,29 +168,36 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        // logout api call 
-        async logout() {
 
+        // api call for changing current password of user.
+        async changePassword({ newPassword, confirmPassword }) {
+
+            // start of api call
+            this.loading = true;
+            this.error = null;
 
             try {
 
-                // start the api call and set loading and error to true and null
-                this.loading = true;
-                this.error = null;
+                // get the csrf token
+                const token = await this.fetchCsrf();
 
-                // make api call
-                const response = await apiFetch("/auth/logout", { method: "POST" });
+                const changedPassword = await apiFetch("/api/auth/change-password", {
+                    method: "POST",
+                    headers: token,
+                    body: JSON.stringify({ newPassword, confirmPassword }),
+                });
 
-                // set user to null- they've been logged out. This clears state.
+                // alert message confirmation
+                alert(changedPassword.message);
+
+                // backend logs user out explicitly, so clear local state
                 this.user = null;
-
-                // we have checked status
-
+                this.authenticated = false;
                 this.checked = true;
+                this.csrfToken = null;
 
-                return response
+                // failure message if api call fails 
             } catch (err) {
-                // error message if logout fails
                 this.error = err.message;
                 throw err;
             } finally {
@@ -120,9 +205,6 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-    }
 
-
-
-
-})
+    },
+});
