@@ -82,6 +82,37 @@ export const useAuthStore = defineStore('auth', {
 
                 return response;
             } catch (err) {
+                // error message if login fails
+                this.error = err.message;
+                throw err;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // logout api call 
+        async logout() {
+
+
+            try {
+
+                // start the api call and set loading and error to true and null
+                this.loading = true;
+                this.error = null;
+
+                // make api call
+                const response = await apiFetch("/auth/logout", { method: "POST" });
+
+                // set user to null- they've been logged out. This clears state.
+                this.user = null;
+
+                // we have checked status
+
+                this.checked = true;
+
+                return response
+            } catch (err) {
+                // error message if logout fails
                 this.error = err.message;
                 throw err;
             } finally {
