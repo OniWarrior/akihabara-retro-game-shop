@@ -1,6 +1,16 @@
 
 
+<script setup>
+import { onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
 
+const auth = useAuthStore();
+
+// Call check status onMounted to rehydrate session
+onMounted(() => {
+  auth.checkStatus();
+});
+</script>
 
 
 <template>
