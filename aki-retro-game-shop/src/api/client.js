@@ -5,31 +5,36 @@
  */
 
 import axios from "axios";
-import { useAuthStore } from "@/stores/AuthStore";
+import { useCsrfStore } from "@/stores/CsrfStore";
+
+// axios instance that will be used for api calls that need interceptors
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true, // Crucial: Allows cookies to be sent/received
-    withXSRFToken: true,   // Modern Axios versions handle the header automatically
+    withCredentials: true,
+    headers: { "Content-Type": "application/json" },
 });
 
-// Attach the interceptor to this specific instance
-api.interceptors.request.use((config) => {
+const unsafe = new Set(["post", "put", "patch", "delete"]);
 
-    // get the token from the auth store
-    const authStore = useAuthStore();
-    const csrfToken = authStore.csrfToken;
+// interceptors that attach the csrf token to unsafe requests.
+api.interceptors.request.use(async (config) => {
+    const method = (config.method || "get").toLowerCase();
 
-    // set the token if it's present
-    if (csrfToken) {
-        config.headers['X-CSRF-Token'] = csrfToken;
+    // if unsafe not GET- retrieve the token
+    if (unsafe.has(method)) {
+        const csrfStore = useCsrfStore();
+
+        if (!csrfStore.csrfToken) {
+            await csrfStore.fetchToken(); // important
+        }
+
+        if (csrfStore.csrfToken) {
+            config.headers = config.headers || {};
+            config.headers["X-CSRF-Token"] = csrfStore.csrfToken;
+        }
     }
 
     return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+}, Promise.reject);
 
 export default api;
-
-
-

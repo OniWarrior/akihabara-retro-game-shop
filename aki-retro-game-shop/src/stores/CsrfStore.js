@@ -5,62 +5,45 @@
  */
 
 import { defineStore } from "pinia";
-import api from "@/api/client";
+import plain from "@/api/plainClient";
 
-export const useCsrfStore = defineStore("auth", {
+export const useCsrfStore = defineStore("csrf", {
     state: () => ({
-        csrfToken: {},   // csrf token
-        loading: false,  // is the action loading
-        error: ""        // error message in the event an action fails
+        csrfToken: null,  // csrf token that was retrieved from backend
+        loading: false,   // prior to api call
+        error: null,     // errror message if api call fails
     }),
 
-    getters: {
-        getToken: (state) => !!state.csrfToken,
-
-    },
-
-    // action suite---api calls
     actions: {
 
-        // fetchToken: api call to get a csrf token for state changing api calls.
-        async fetchToken() {
+        // fetchToken: action that fetches a new token
+        async fetchToken(force = false) {
+
+            // if no refresh return cached token
+            if (!force && this.csrfToken) return this.csrfToken;
+
+            // prior to api call load is true and error message is null
+            this.loading = true;
+            this.error = null;
 
             try {
-
-                // start the api call by setting loading to true
-                this.loading = true;
-
-                // initial error message is null
-                this.error = null;
-
-                // make api call and store result
-                const response = await api.get("/csrf");
-
-                // extract the token from the response
-                const token = response.data.csrfToken;
-
-                // assign the returned token to state property for caching
-                this.token = token;
-
-                return token;
+                const response = await plain.get("/csrf");
+                this.csrfToken = response.data.csrfToken;
+                return this.csrfToken;
             } catch (err) {
-                // if the api call failed-token is null
-                this.token = null;
-
-                // assign the returned error message
-                this.error = err.responseponse?.data?.message;
+                // failure response occurs- assign error message
+                this.csrfToken = null;
+                this.error = err.response?.data?.message;
                 throw err;
             } finally {
                 this.loading = false;
             }
         },
 
-        // clear current token and error for next api call.
+        // clear for fresh token and message.
         clear() {
-            this.token = null;
+            this.csrfToken = null;
             this.error = null;
-
-        }
-    }
-
+        },
+    },
 });
