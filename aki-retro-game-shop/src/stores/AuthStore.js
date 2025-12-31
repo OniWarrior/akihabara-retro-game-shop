@@ -18,6 +18,8 @@ export const useAuthStore = defineStore("auth", {
 
     getters: {
         isAuthenticated: (state) => state.authenticated === true,
+        isManager: (state) => state.user?.user_type === "Manager",
+        isCustomer: (state) => state.user?.user_type === "Customer"
     },
 
     actions: {
@@ -40,7 +42,7 @@ export const useAuthStore = defineStore("auth", {
 
                 this.initialized = true;
             } catch (err) {
-                this.error = err?.response?.data?.message || err.message || "Init failed";
+                this.error = err?.response?.data?.message;
                 this.authentication = false;
                 this.user = null;
                 this.initialized = true;
@@ -58,12 +60,16 @@ export const useAuthStore = defineStore("auth", {
                 // make api call to signup
                 const res = await api.post("/api/auth/signup", { username, password });
 
-                alert(`${res.data.message}`);
-
-                return true;
+                return {
+                    success: true,
+                    message: res.data.message,
+                };
             } catch (err) {
                 this.error = err?.response?.data?.message;
-                return false;
+                return {
+                    success: false,
+                    message: this.error,
+                };
             } finally {
                 this.loading = false;
             }
@@ -78,8 +84,7 @@ export const useAuthStore = defineStore("auth", {
                 // make api call to login
                 const logRes = await api.post("/api/auth/login", { username, password });
 
-                // alert login confirmation message
-                alert(`${logRes.data.message}`);
+
 
                 // session was regenerated server-side → refresh CSRF token
                 await initCsrf();
@@ -89,12 +94,16 @@ export const useAuthStore = defineStore("auth", {
                 this.authentication = !!res.data.authentication;
                 this.user = res.data.user || null;
 
-                return true;
+                return {
+                    success: true,
+                    message: logRes.data.message,
+                };
             } catch (err) {
                 this.error = err?.response?.data?.message;
-                this.authentication = false;
-                this.user = null;
-                return false;
+                return {
+                    success: false,
+                    message: this.error,
+                };
             } finally {
                 this.loading = false;
             }
@@ -109,9 +118,6 @@ export const useAuthStore = defineStore("auth", {
                 // make api call to logout
                 const res = await api.post("/api/auth/logout");
 
-                // confirmation message
-                alert(`${res.data.message}`);
-
 
                 // clear local auth state
                 this.authentication = false;
@@ -123,13 +129,56 @@ export const useAuthStore = defineStore("auth", {
                 //  re-init csrf for “logged-out browsing”
                 await initCsrf();
 
-                return true;
+                return {
+                    success: true,
+                    message: res.data.message,
+                };
             } catch (err) {
                 this.error = err?.response?.data?.message;
-                return false;
+                return {
+                    success: false,
+                    message: this.error,
+                };
             } finally {
                 this.loading = false;
             }
         },
+
+        async changePassword({ newPassword, confirmPassword }) {
+            this.loading = true;
+            this.error = null;
+
+            try {
+
+                // make api call to change forgotten password
+                const res = await api.post("/api/auth/change-password", {
+                    newPassword,
+                    confirmPassword,
+                });
+
+                // backend destroyed session → reflect that locally
+                this.authentication = false;
+                this.user = null;
+
+                // clear cached CSRF token (session changed)
+                clearCsrf();
+
+                // re-init CSRF for logged-out state
+                await initCsrf();
+
+                return {
+                    success: true,
+                    message: res.data.message,
+                };
+            } catch (err) {
+                this.error = err?.response?.data?.message;
+                return {
+                    success: false,
+                    message: this.error,
+                };
+            } finally {
+                this.loading = false;
+            }
+        }
     },
 });
