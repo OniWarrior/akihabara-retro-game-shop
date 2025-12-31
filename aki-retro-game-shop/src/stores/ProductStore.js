@@ -76,7 +76,7 @@ export const useProductsStore = defineStore("products", {
 
                 return { success: true, message: res.data?.message };
             } catch (err) {
-                this.error = err?.response?.data?.message || err.message || "Add product failed";
+                this.error = err?.response?.data?.message;
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
