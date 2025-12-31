@@ -1,21 +1,18 @@
 
 
 <script setup>
-	import { onMounted } from "vue";
-	import { useCsrfStore } from "@/stores/csrf.store";
+import { onMounted } from "vue";
+import { useAuthStore } from "@/stores/AuthStore";
 
-    //import the csrf store to fetch token
-	const csrf = useCsrfStore();
+const auth = useAuthStore();
 
-	onMounted(() => {
-
-  		csrf.fetchToken(); // warms up token early
-	});
+onMounted(() => {
+  auth.init();
+});
 </script>
 
-
 <template>
-  <router-view/>    
+  <router-view />
 </template>
 
 <style >
