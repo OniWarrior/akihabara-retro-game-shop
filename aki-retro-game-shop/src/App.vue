@@ -1,10 +1,18 @@
 
 
+<script setup>
+import { onMounted } from "vue";
+import { useAuthStore } from "@/stores/AuthStore";
 
+const auth = useAuthStore();
 
+onMounted(() => {
+  auth.init();
+});
+</script>
 
 <template>
-  <router-view/>    
+  <router-view />
 </template>
 
 <style >

@@ -3,8 +3,6 @@
 </script>
 
 
-
-
 <template>
   <div class="landing-container">
     <SignedOutNav />  
