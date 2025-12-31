@@ -5,190 +5,131 @@
  */
 
 import { defineStore } from "pinia";
-import api from "@/api/client";
-import { useCsrfStore } from "@/stores/CsrfStore";
-
+import api, { initCsrf, clearCsrf } from "@/api/client";
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
-        user: null,               // user object for user information
-        authenticated: false,     // authenticated prop to check for authentication on protected routes
-        loading: false,          // loading prop prior to or after api calls are made
-        error: null,             // error message if api call fails
-        lastCheckedAt: null,      // date that shows last status check
+        user: null,
+        authenticated: false, // matches backend authenticated
+        loading: false,
+        error: null,
+        initialized: false,
     }),
 
     getters: {
-        // get authentication prop
-        isAuthenticated: (state) => state.authenticated,
+        isAuthenticated: (state) => state.authenticated === true,
     },
 
-    // action suite
     actions: {
-        // clear error message
-        clearError() {
-            this.error = null;
-        },
 
-        // reset state object
-        reset() {
-            this.user = null;
-            this.authenticated = false;
-            this.loading = false;
-            this.error = null;
-            this.lastCheckedAt = null;
-        },
 
-        // INTERNAL: no loading/error mutation (prevents flicker)
-        async _checkStatusSilent() {
+        async init() {
+            // called once on app startup
+            this.loading = true;
+            this.error = null;
+
             try {
+                // establish CSRF for this browser session
+                await initCsrf();
 
-                // make api call to get status
+                // check whether session already exists
                 const res = await api.get("/api/auth/status");
 
-                // assign returned user and authenticated to state object props
                 this.authenticated = !!res.data.authenticated;
-                this.user = res.data.user ?? null;
-                this.lastCheckedAt = Date.now();
+                this.user = res.data.user || null;
 
-                return this.authenticated;
-            } catch {
-                this.authenticated = false;
-                this.user = null;
-                this.lastCheckedAt = Date.now();
-                return false;
-            }
-        },
-
-        // PUBLIC: for pages/guards that want spinner/error behavior
-        async checkStatus() {
-            this.loading = true;
-            this.error = null;
-
-            try {
-                return await this._checkStatusSilent();
+                this.initialized = true;
             } catch (err) {
-                // _checkStatusSilent never throws, but keep this defensive
-                this.error = err.response?.data?.message;
-                return false;
+                this.error = err?.response?.data?.message || err.message || "Init failed";
+                this.authentication = false;
+                this.user = null;
+                this.initialized = true;
             } finally {
                 this.loading = false;
             }
         },
 
-        // POST /api/auth/login -> logs the user in
-        async login({ username, password }) {
-            this.loading = true;
-            this.error = null;
-
-            try {
-
-                const user = { username, password }
-
-                // make api call to log user in
-                const loggedIn = await api.post("/api/auth/login", user);
-
-                // confirm log in
-                alert(`${loggedIn.message}`);
-
-
-                // pull req.session.user without flicker
-                await this._checkStatusSilent();
-
-
-            } catch (err) {
-                // failed api call
-                this.authenticated = false;
-                this.user = null;
-                this.error = err.response?.data?.message;
-                throw err;
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        // POST /api/auth/signup : create account
         async signup({ username, password }) {
             this.loading = true;
             this.error = null;
 
             try {
 
-                const user = { username, password }
-                const res = await api.post("/api/auth/signup", user);
+                // make api call to signup
+                const res = await api.post("/api/auth/signup", { username, password });
 
-                // confirmation message
-                alert(`${res.message}`);
+                alert(`${res.data.message}`);
 
-                // get user info and authenticated
-                await this._checkStatusSilent();
-
-
-
+                return true;
             } catch (err) {
-                // api failure response.
-                this.error = err.response?.data?.message;
-                throw err;
+                this.error = err?.response?.data?.message;
+                return false;
             } finally {
                 this.loading = false;
             }
         },
 
-        // POST /api/auth/logout: logout user
+        async login({ username, password }) {
+            this.loading = true;
+            this.error = null;
+
+            try {
+
+                // make api call to login
+                const logRes = await api.post("/api/auth/login", { username, password });
+
+                // alert login confirmation message
+                alert(`${logRes.data.message}`);
+
+                // session was regenerated server-side → refresh CSRF token
+                await initCsrf();
+
+                // refresh auth state
+                const res = await api.get("/api/auth/status");
+                this.authentication = !!res.data.authentication;
+                this.user = res.data.user || null;
+
+                return true;
+            } catch (err) {
+                this.error = err?.response?.data?.message;
+                this.authentication = false;
+                this.user = null;
+                return false;
+            } finally {
+                this.loading = false;
+            }
+        },
+
         async logout() {
             this.loading = true;
             this.error = null;
 
             try {
 
-                // make api call to logout user
-                const loggedOut = await api.post("/api/auth/logout");
+                // make api call to logout
+                const res = await api.post("/api/auth/logout");
 
                 // confirmation message
-                alert(`${loggedOut.message}`);
+                alert(`${res.data.message}`);
 
-            } catch {
-                // ignore; still clear locally
-            } finally {
+
+                // clear local auth state
+                this.authentication = false;
                 this.user = null;
-                this.authenticated = false;
-                this.lastCheckedAt = Date.now();
 
-                // clear CSRF for clean slate (optional but nice)
-                const csrf = useCsrfStore();
-                csrf.clear();
+                // clear csrf cache 
+                clearCsrf();
 
-                this.loading = false;
-            }
-        },
+                //  re-init csrf for “logged-out browsing”
+                await initCsrf();
 
-        // POST /api/auth/change-password: change forgotten password
-        async changePassword({ newPassword, confirmPassword }) {
-            this.loading = true;
-            this.error = null;
-
-            try {
-
-                const user = { newPassword, confirmPassword };
-
-                // make api call to change the forgotten password
-                const res = await api.post("/api/auth/change-password", user);
-
-                alert(`${res.message}`);
-
-
+                return true;
             } catch (err) {
-                this.error = err.response?.data?.message || "Change password failed";
-                throw err;
+                this.error = err?.response?.data?.message;
+                return false;
             } finally {
                 this.loading = false;
             }
-        },
-
-        //  call once on app start
-        async bootstrap() {
-
-            return await this.checkStatus();
         },
     },
 });
