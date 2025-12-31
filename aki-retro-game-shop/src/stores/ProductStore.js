@@ -5,6 +5,7 @@
  */
 
 import { defineStore } from "pinia";
+import { useAuthStore } from "./AuthStore";
 import api from "@/api/client";
 
 export const useProductsStore = defineStore("products", {
@@ -47,6 +48,36 @@ export const useProductsStore = defineStore("products", {
                 this.items = [];
                 this.initialized = false;
                 return [];
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // addProduct: manager action that allows the manager to add a product.
+        async addProduct(productPayload) {
+            const auth = useAuthStore();
+
+            // check user role
+            if (!auth.isManager) {
+                this.error = "Only managers can add products.";
+                return { success: false, message: this.error };
+            }
+
+            this.loading = true;
+            this.error = null;
+
+            try {
+
+                // make api call to add a product to product inventory
+                const res = await api.post("/api/user/add-product", productPayload);
+
+                // refresh list since backend doesn't return the created product
+                await this.fetchAll({ force: true });
+
+                return { success: true, message: res.data?.message };
+            } catch (err) {
+                this.error = err?.response?.data?.message || err.message || "Add product failed";
+                return { success: false, message: this.error };
             } finally {
                 this.loading = false;
             }
