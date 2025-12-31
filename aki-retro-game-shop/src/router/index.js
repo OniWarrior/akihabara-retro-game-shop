@@ -35,6 +35,10 @@ const router = createRouter({
       component: LoginView,
       meta: { guestOnly: true }
     },
+    {
+      path: "/add-product",
+      meta: { requiresAuth: true, requiresRole: "Manager" }
+    }
 
 
   ],
