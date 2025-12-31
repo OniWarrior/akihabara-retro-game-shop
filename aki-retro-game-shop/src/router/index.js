@@ -1,9 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import LoginView from '../views/LoginView.vue'
+import HomeView from "../views/HomeView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import LoginView from "../views/LoginView.vue";
+import ProductsView from "../views/ProductsView.vue"; // when you create it
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,21 +12,29 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView,
-      meta: { public: true },
+      component: HomeView
     },
+
+    // Public products page
+    {
+      path: "/products",
+      name: "products",
+      component: ProductsView
+    },
+
+    // Guest-only
     {
       path: "/register",
       name: "register",
       component: RegisterView,
-      meta: { guestOnly: true },
+      meta: { guestOnly: true }
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      meta: { guestOnly: true },
-    }
+      meta: { guestOnly: true }
+    },
 
 
   ],
@@ -34,20 +43,22 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const auth = useAuthStore();
 
-  // check session status
-  if (!auth.checked && !auth.loading) {
-    await auth.status();
+  // Initialize auth once (loads CSRF + checks /status)
+  if (!auth.initialized && !auth.loading) {
+    await auth.init();
   }
 
-  //  Block unauthenticated users from protected routes
+  // Only applies if you add protected routes later
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    return { name: "login" };
+    return { name: "login", query: { redirect: to.fullPath } };
   }
 
-  //  Block authenticated users from login/register pages
+  // Prevent logged-in users from visiting login/register
   if (to.meta.guestOnly && auth.isAuthenticated) {
-    return { name: "home" };
+    return { name: "products" }; // logged-in landing
   }
+
+  return true;
 });
 
-export default router
+export default router;
