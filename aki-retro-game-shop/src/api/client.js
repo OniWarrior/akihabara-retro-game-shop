@@ -5,36 +5,43 @@
  */
 
 import axios from "axios";
-import { useCsrfStore } from "@/stores/CsrfStore";
 
-// axios instance that will be used for api calls that need interceptors
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
-    headers: { "Content-Type": "application/json" },
+    withCredentials: true,                // IMPORTANT: sends session cookies
 });
 
-const unsafe = new Set(["post", "put", "patch", "delete"]);
+let csrfToken = null;
 
-// interceptors that attach the csrf token to unsafe requests.
-api.interceptors.request.use(async (config) => {
+/**
+ * Fetch CSRF token and cache it in this module.
+ * Must be called at app startup and after login/logout sessions are rotated.
+ */
+export async function initCsrf() {
+    const res = await api.get("/api/auth/csrf");
+    csrfToken = res.data.csrfToken;
+    return csrfToken;
+}
+
+export function getCsrf() {
+    return csrfToken;
+}
+
+export function clearCsrf() {
+    csrfToken = null;
+}
+
+// Attach CSRF token automatically to state-changing requests
+api.interceptors.request.use((config) => {
     const method = (config.method || "get").toLowerCase();
+    const isStateChanging = ["post", "put", "patch", "delete"].includes(method);
 
-    // if unsafe not GET- retrieve the token
-    if (unsafe.has(method)) {
-        const csrfStore = useCsrfStore();
-
-        if (!csrfStore.csrfToken) {
-            await csrfStore.fetchToken(); // important
-        }
-
-        if (csrfStore.csrfToken) {
-            config.headers = config.headers || {};
-            config.headers["X-CSRF-Token"] = csrfStore.csrfToken;
-        }
+    if (isStateChanging && csrfToken) {
+        config.headers = config.headers || {};
+        config.headers["X-CSRF-Token"] = csrfToken;
     }
 
     return config;
-}, Promise.reject);
+});
 
 export default api;
